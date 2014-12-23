@@ -50,26 +50,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	platParams := platypus.Parameters{
-		Logintype: "Staff",
-		Username:  username,
-		Password:  password,
-		Datatype:  "XML",
-	}
-
-	res, err := plat.Exec("Login", platParams)
+	err = plat.Login(username, password)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-		os.Exit(1)
+		fmt.Println(err)
+		os.Exit(2)
 	}
-
-	fmt.Println(res.ResponseText)
-
-	if res.Success == 1 {
-		os.Exit(0)
-	} else if res.Success == 0 {
-		os.Exit(0)
-	}
-
-	os.Exit(2)
 }
