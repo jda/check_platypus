@@ -1,8 +1,15 @@
 package platypus
 
-type Container struct {
-	Header string `xml:"header"`
-	Body   Body   `xml:"body"`
+type RequestContainer struct {
+	XMLName struct{} `xml:"PLATXML"`
+	Header  string   `xml:"header"`
+	Body    Body     `xml:"body"`
+}
+
+type ResponseContainer struct {
+	XMLName struct{} `xml:"PLAT_XML"`
+	Header  string   `xml:"header"`
+	Body    Body     `xml:"body"`
 }
 
 type Body struct {
@@ -18,9 +25,9 @@ type DataBlock struct {
 	Logintype    string     `xml:"logintype"`
 	Properties   string     `xml:"properties"`
 	Parameters   Parameters `xml:"parameters"`
-	ResponseCode string     `xml:"response_code"`
-	ResponseText string     `xml:"response_text"`
-	Success      int        `xml:"is_success"`
+	ResponseCode string     `xml:"response_code,omitempty"`
+	ResponseText string     `xml:"response_text,omitempty"`
+	Success      int        `xml:"is_success,omitempty"`
 }
 
 type Parameters struct {
