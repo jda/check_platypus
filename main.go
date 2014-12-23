@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/xml"
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -10,15 +11,42 @@ import (
 	"strings"
 )
 
+const version = "check_platypus 0.2"
+
+func usage() {
+	fmt.Fprintln(os.Stderr, version)
+	fmt.Fprintf(os.Stderr, "usage: %s [args] HOSTNAME USERNAME PASSWORD\n", os.Args[0])
+	flag.PrintDefaults()
+	os.Exit(64)
+}
+
 func main() {
-	if len(os.Args) != 4 {
-		fmt.Fprintf(os.Stderr, "Usage: %s HOSTNAME USERNAME PASSWORD\n", os.Args[0])
-		os.Exit(1)
+	port := 5565
+	debug := false
+
+	flag.Usage = usage
+	flag.BoolVar(&debug, "debug", false, "enable debug output")
+	flag.IntVar(&port, "port", 5565, "Platypus API service port")
+	flag.Parse()
+
+	if len(flag.Args()) != 3 {
+		usage()
 	}
 
-	hostname := os.Args[1] + ":5565"
-	username := os.Args[2]
-	password := os.Args[3]
+	hostname := fmt.Sprintf("%s:%d", flag.Arg(0), port)
+	if debug {
+		fmt.Fprintf(os.Stderr, "Host: %s\n", hostname)
+	}
+
+	username := flag.Arg(1)
+	if debug {
+		fmt.Fprintf(os.Stderr, "Username: %s\n", username)
+	}
+
+	password := flag.Arg(2)
+	if debug {
+		fmt.Fprintf(os.Stderr, "Password: %s\n", password)
+	}
 
 	addr, err := net.ResolveTCPAddr("tcp", hostname)
 	if err != nil {
