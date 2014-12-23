@@ -1,6 +1,6 @@
-package main
+package platypus
 
-type PLATXML struct {
+type Container struct {
 	Header string `xml:"header"`
 	Body   Body   `xml:"body"`
 }

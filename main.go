@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./platypus"
 	"bufio"
 	"encoding/xml"
 	"flag"
@@ -54,7 +55,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	var platcmd = PLATXML{}
+	var platcmd = platypus.Container{}
 	platcmd.Header = ""
 	platcmd.Body.Data.Protocol = "Plat"
 	platcmd.Body.Data.Object = "addusr"
@@ -112,7 +113,7 @@ func main() {
 
 	conn.Close()
 
-	var platresp = PLATXML{}
+	var platresp = platypus.Container{}
 	err = xml.Unmarshal(buf, &platresp)
 	if err != nil {
 		fmt.Println("Error: ", err.Error())
