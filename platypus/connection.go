@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -15,6 +17,7 @@ type Platypus struct {
 	username  string
 	password  string
 	logintype string
+	Debug     bool
 }
 
 func New(host string, user string, pass string) (Platypus, error) {
@@ -46,7 +49,7 @@ func (p Platypus) newDataBlock() DataBlock {
 	return db
 }
 
-func (p Platypus) Exec(action string, params Parameters) (DataBlock, error) {
+func (p Platypus) Exec(action string, params interface{}) (DataBlock, error) {
 	reply := DataBlock{}
 
 	// prep request
@@ -71,6 +74,10 @@ func (p Platypus) Exec(action string, params Parameters) (DataBlock, error) {
 	xmlcmd = append([]byte(xml.Header), xmlcmd...)
 	prefix := []byte("Content-Length:" + strconv.Itoa(len(xmlcmd)) + "\r\n\r\n")
 	rawout := append(prefix, xmlcmd...)
+
+	if p.Debug {
+		fmt.Fprintf(os.Stderr, "Request:\n%s\n", rawout)
+	}
 
 	// send request
 	conn, err := net.DialTCP("tcp", nil, p.addr)
@@ -101,6 +108,10 @@ func (p Platypus) Exec(action string, params Parameters) (DataBlock, error) {
 	}
 
 	conn.Close()
+
+	if p.Debug {
+		fmt.Fprintf(os.Stderr, "Response:\n%s\n", buf)
+	}
 
 	var res = ResponseContainer{}
 	err = xml.Unmarshal(buf, &res)
