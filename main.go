@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 )
 
 const version = "check_platypus 0.2"
@@ -19,10 +20,12 @@ func usage() {
 func main() {
 	port := 5565
 	debug := false
+	lastEventRun := 0
 
 	flag.Usage = usage
 	flag.BoolVar(&debug, "debug", false, "enable debug output")
 	flag.IntVar(&port, "port", 5565, "Platypus API service port")
+	flag.IntVar(&lastEventRun, "lasteventrun", 0, "check if event scheduler was triggered in past N minutes")
 	flag.Parse()
 
 	if len(flag.Args()) != 3 {
@@ -50,9 +53,33 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = plat.Login(username, password)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(2)
+	if debug {
+		plat.Debug = true
 	}
+
+	if lastEventRun > 0 {
+		lastRun, err := plat.LastRun()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+
+		var deltaTime time.Duration = time.Duration(lastEventRun) * time.Minute
+		deadline := lastRun.Add(deltaTime)
+
+		if time.Now().Unix() > deadline.Unix() {
+			fmt.Printf("Deadline of %s passed\n", deadline)
+			os.Exit(2)
+		} else {
+			os.Exit(0)
+		}
+
+	} else {
+		err = plat.Login(username, password)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+	}
+
 }
