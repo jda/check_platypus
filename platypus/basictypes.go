@@ -1,5 +1,9 @@
 package platypus
 
+import (
+	"encoding/xml"
+)
+
 type RequestContainer struct {
 	XMLName struct{} `xml:"PLATXML"`
 	Header  string   `xml:"header"`
@@ -17,22 +21,39 @@ type Body struct {
 }
 
 type DataBlock struct {
-	Protocol     string     `xml:"protocol"`
-	Object       string     `xml:"object"`
-	Action       string     `xml:"action"`
-	Username     string     `xml:"username"`
-	Password     string     `xml:"password"`
-	Logintype    string     `xml:"logintype"`
-	Properties   string     `xml:"properties"`
-	Parameters   Parameters `xml:"parameters"`
-	ResponseCode string     `xml:"response_code,omitempty"`
-	ResponseText string     `xml:"response_text,omitempty"`
-	Success      int        `xml:"is_success,omitempty"`
+	Protocol     string             `xml:"protocol"`
+	Object       string             `xml:"object"`
+	Action       string             `xml:"action"`
+	Username     string             `xml:"username"`
+	Password     string             `xml:"password"`
+	Logintype    string             `xml:"logintype"`
+	Properties   string             `xml:"properties"`
+	Parameters   interface{}        `xml:"parameters"`
+	ResponseCode string             `xml:"response_code,omitempty"`
+	ResponseText string             `xml:"response_text,omitempty"`
+	Success      int                `xml:"is_success,omitempty"`
+	Attributes   AttributeDataBlock `xml:"attributes,omitempty"`
 }
 
-type Parameters struct {
-	Logintype string `xml:"logintype"`
-	Username  string `xml:"username"`
-	Password  string `xml:"password"`
-	Datatype  string `xml:"datatype"`
+type AttributeDataBlock struct {
+	Block []AttributeBlock `xml:"data_block,omitempty"`
+}
+
+type AttributeBlock struct {
+	AttributeList []Attribute `xml:",any,omitempty"`
+}
+
+type Attribute struct {
+	XMLName xml.Name
+	Value   string `xml:",chardata"`
+}
+
+func unwrapAttributeBlock(ab AttributeBlock) map[string]string {
+	m := make(map[string]string)
+
+	for _, v := range ab.AttributeList {
+		m[v.XMLName.Local] = v.Value
+	}
+
+	return m
 }

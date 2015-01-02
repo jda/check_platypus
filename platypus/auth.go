@@ -4,8 +4,15 @@ import (
 	"errors"
 )
 
+type LoginMethodParameters struct {
+	Logintype string `xml:"logintype"`
+	Username  string `xml:"username"`
+	Password  string `xml:"password"`
+	Datatype  string `xml:"datatype"`
+}
+
 func (p Platypus) Login(username string, password string) error {
-	params := Parameters{
+	params := LoginMethodParameters{
 		Logintype: "Staff",
 		Datatype:  "XML",
 		Username:  username,
