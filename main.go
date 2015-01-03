@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./platypus"
+	"github.com/jda/go-platypus"
 	"flag"
 	"fmt"
 	"os"
