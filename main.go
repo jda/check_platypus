@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/jda/go-platypus"
 	"flag"
 	"fmt"
+	"go.jona.me/platypus"
 	"os"
 	"time"
 )
