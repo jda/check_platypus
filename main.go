@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const version = "check_platypus 0.2"
+const version = "check_platypus 0.3"
 
 func usage() {
 	fmt.Fprintln(os.Stderr, version)
