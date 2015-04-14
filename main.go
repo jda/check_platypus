@@ -20,10 +20,12 @@ func usage() {
 func main() {
 	port := 5565
 	debug := false
+	ssl := false
 	lastEventRun := 0
 
 	flag.Usage = usage
 	flag.BoolVar(&debug, "debug", false, "enable debug output")
+	flag.BoolVar(&ssl, "ssl", false, "enable ssl")
 	flag.IntVar(&port, "port", 5565, "Platypus API service port")
 	flag.IntVar(&lastEventRun, "lasteventrun", 0, "check if event scheduler was triggered in past N minutes")
 	flag.Parse()
@@ -47,7 +49,13 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Password: %s\n", password)
 	}
 
-	plat, err := platypus.New(hostname, username, password)
+	var plat platypus.Platypus
+	var err error
+	if ssl == true {
+		plat, err = platypus.NewSSL(hostname, username, password, true)
+	} else {
+		plat, err = platypus.New(hostname, username, password)
+	}
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not prep connection: %s", err)
 		os.Exit(1)
