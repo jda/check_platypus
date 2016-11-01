@@ -1,6 +1,8 @@
 check_platypus
 ==============
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 Nagios check that verifies that the Tucows Platypus XML API is working and optionally that the Platypus event scheduler has been triggered recently.
 
 ## Usage
